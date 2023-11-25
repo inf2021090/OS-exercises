@@ -1,5 +1,5 @@
 mycopy: mycopy.c
-	gcc -o mycopy mycopy.c -Wall -Wextra
+	gcc -o mycopy mycopy.c -Wall 
 
 clean:
 	rm -f mycopy
