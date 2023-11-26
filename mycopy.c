@@ -21,7 +21,7 @@ ssize_t myCopy(const char *src, const char *dst, size_t buffer_size) {
         return -1;
     }
 
-    /* open destination file with rwx permission */
+    /* open destination file */
     if ((dest_fd = open(dst, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1) {
         perror("Destination file cannot be opened for writing!");
         close(source_fd);
@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
     
-    /*  use clock_t to count time taken for copy function */
+    /*  use clock to count time taken for copy function */
     clock_t start_time = clock();
     
     ssize_t bytes_copied = myCopy(src, dst, buffer_size);
