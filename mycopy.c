@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include <string.h>
 #include <time.h>
 
@@ -18,14 +19,16 @@ ssize_t myCopy(const char *src, const char *dst, size_t buffer_size) {
     source_fd = open(src, O_RDONLY);
     if (source_fd == -1) {
         perror("Source file cannot be opened for reading!");
-        return -1;
+        printf("Error code: %d\n", errno);
+        exit(2);
     }
 
     /* open destination file */
     if ((dest_fd = open(dst, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) == -1) {
         perror("Destination file cannot be opened for writing!");
         close(source_fd);
-        return -1;
+        printf("Error code: %d\n", errno);
+        exit(3);
     }
     
     /* write bytes from source file to destination file*/
@@ -36,7 +39,8 @@ ssize_t myCopy(const char *src, const char *dst, size_t buffer_size) {
             perror("Error writing bytes!");
             close(source_fd);
             close(dest_fd);
-            return -1;
+            printf("Error code: %d\n", errno);
+            exit(4);
         }
     }
 
@@ -61,7 +65,8 @@ int main(int argc, char **argv) {
         dst = argv[4];
     } else {
         printf("Usage: mycopy [-b buffer_size] source_file destination_file\n"); // handle errors 
-        exit(1);
+        printf("Error code: %d\n", errno);
+        exit(0);
     }
     
     /*  use clock to count time taken for copy function */
@@ -76,7 +81,8 @@ int main(int argc, char **argv) {
     FILE *report_file = fopen("report.out", "a");
     if (report_file == NULL) {
         fprintf(stderr, "Error with report file! Cannot be opened or created!");
-        exit(1);
+        printf("Error code: %d\n", errno);
+        exit(13);
     }
     fprintf(report_file, "Buffer size: %zu bytes\nTime taken: %.6f seconds\n\n",buffer_size, time_taken);
       
