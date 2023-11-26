@@ -1,6 +1,9 @@
-mycopy: mycopy.c
-	gcc -o mycopy mycopy.c -Wall 
+mycopy: mycopy.o
+	gcc -Wall mycopy.o -o mycopy
+
+mycopy.o: mycopy.c
+	gcc -Wall -c mycopy.c
 
 clean:
-	rm -f mycopy
+	rm -f mycopy mycopy.o
 
