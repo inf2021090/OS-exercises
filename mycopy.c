@@ -28,7 +28,7 @@ ssize_t myCopy(const char *src, const char *dst, size_t buffer_size) {
         perror("Destination file cannot be opened for writing!");
         close(source_fd);
         printf("Error code: %d\n", errno);
-        exit(3);
+        exit(13);
     }
     
     /* write bytes from source file to destination file*/
@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
     if (report_file == NULL) {
         fprintf(stderr, "Error with report file! Cannot be opened or created!");
         printf("Error code: %d\n", errno);
-        exit(13);
+        exit(24);
     }
     fprintf(report_file, "Buffer size: %zu bytes\nTime taken: %.6f seconds\n\n",buffer_size, time_taken);
       
