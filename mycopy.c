@@ -35,13 +35,6 @@ ssize_t myCopy(const char *src, const char *dst, size_t buffer_size) {
     ssize_t bytes_read;
     while ((bytes_read = read(source_fd, buffer, buffer_size)) > 0) {
         bytes_written = write(dest_fd, buffer, (size_t)bytes_read);
-        if (bytes_written != bytes_read) {
-            perror("Error writing bytes!");
-            close(source_fd);
-            close(dest_fd);
-            printf("Error code: %d\n", errno);
-            exit(4);
-        }
     }
 
     close(source_fd);
