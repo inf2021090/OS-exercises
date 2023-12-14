@@ -8,7 +8,7 @@ int main(int argc, char *argv[]){
 	
 	int fd[2];
 	pid_t pid;
-	char buffer[1024];
+	char line[64];
 	ssize_t bytesRead;
 	
 	//check number of arguments
@@ -47,17 +47,17 @@ int main(int argc, char *argv[]){
 	  //parent process
 	  close(fd[1]);
 	  //will read data from the pipe
-	  while ((bytesRead = read(fd[0], buffer, sizeof(buffer)-1)) > 0) {	
+	  while ((bytesRead = read(fd[0], line, sizeof(line))) > 0) {	
 	  		printf("Data received through pipe:");
 	  		//will print the required message everytime a newline is encountered
 	  		//otherwise prints the buffer's data 
 	  		for (ssize_t i = 0; i < bytesRead-1; ++i) {
-				if (buffer[i] == '\n') {
+				if (line[i] == '\n') {
                     printf("Data received through pipe:");
                 }
                 else{
-	                printf("%c", buffer[i]);
-	                if (buffer[i+1]=='\n'){
+	                printf("%c", line[i]);
+	                if (line[i+1]=='\n'){
 	                	printf("\n");
 					}
 	   			}
@@ -65,3 +65,4 @@ int main(int argc, char *argv[]){
 		}
 	}
 }
+
