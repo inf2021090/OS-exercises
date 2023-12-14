@@ -15,15 +15,15 @@ int main(int argc, char *argv[]){
 	
 	//check number of arguments
 	if (argc != 2){
-    errno = 10;
+                errno = 10;
 		perror("Usage:helper filename\n"); //error handling
 		printf("Error code: %d\n", errno);
-    exit(10);
+                exit(10);
 	}
 	
 	//check pipe error
 	if (pipe(fd) < 0){
-    errno = 1;
+                errno = 1;
 		printf("Pipe Error:");
 		exit(1);
 		printf("Error code: %d\n", errno);
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]){
 	
 	//check fork error
 	if (pid < 0){
-    errno = 2;
+                errno = 2;
 		printf("Fork Error:");
 		exit(2);
 		printf("Error code: %d\n", errno);
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
 	if (pid == 0){
 		//child process
 		close(fd[0]);
-    errno = 13;
+                errno = 13;
 		dup2(fd[1], STDOUT_FILENO);
 		execlp("sort", "sort","-n", argv[1], (char *)NULL);
 		perror("Error during execlp command");
