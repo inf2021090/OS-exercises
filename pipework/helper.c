@@ -1,67 +1,78 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 
-int main(int argc, char* argv[]){
-
-  if (argc != 2){
-    fprintf(stderr, "Usage: %s <infile>\n", argv[0]);
-    printf("Error code: %d\n", 3003);
-    exit(EXIT_FAILURE);
-  }
-
-  int fd[2];
-  if (pipe(fd) == -1){
-    perror("Pipe failed!");
-    printf("Error code: %d\n", 10);
-    exit(0);
-  }
-
-  int pid = fork();
-  if (pid == -1){
-    perror("Fork failed!");
-    printf("Error code: %d\n", errno);
-    exit(20);
-  }
-
-  if (pid == 0){ //child process
-    close(fd[0]);
-       
-    dup2(fd[1], STDOUT_FILENO);
-
-    execlp("sort", "sort", "-n", argv[1],  (char *)0);
-
-  } else { //parent process
-		close(fd[1]); // close writing end of pipe
-
-		char ch;
-		int newLine = 1; // Flag to indicate start of a new line
+int main(int argc, char *argv[]){
+	
+	int fd[2];
+	pid_t pid;
+	char line[64];
+	ssize_t bytesRead;
+	
+	//check number of arguments
+	if (argc != 2){
+    errno = 10;
+		perror("Usage:helper filename\n"); //error handling
+		printf("Error code: %d\n", errno);
+    exit(10);
+	}
+	
+	//check pipe error
+	if (pipe(fd) < 0){
+    errno = 1;
+		printf("Pipe Error:");
+		exit(1);
+		printf("Error code: %d\n", errno);
+	}
+	
+	//create child proccess 	
+	pid=fork();
+	
+	//check fork error
+	if (pid < 0){
+    errno = 2;
+		printf("Fork Error:");
+		exit(2);
+		printf("Error code: %d\n", errno);
+	}
+	
+	//redirect standard output to write end of pipe
+	//will return the sorted data of the file to the write end
+	if (pid == 0){
+		//child process
+		close(fd[0]);
+    errno = 13;
+		dup2(fd[1], STDOUT_FILENO);
+		execlp("sort", "sort","-n", argv[1], (char *)NULL);
+		perror("Error during execlp command");
+		printf("Error code: %d\n", errno);
+		exit(13);
 		
-		// read from the pipe and print received data line by line
-		while (read(fd[0], &ch, 1) > 0) {
-		    if (newLine) {
-		        printf("Data received through pipe: ");
-		        newLine = 0;
-		    }
-		
-		    if (ch == '\n') {
-		        putchar('\n');
-		        newLine = 1;
-		    } else {
-		        putchar(ch);
-		    }
+	}
+	else{
+	  //parent process
+	  close(fd[1]);
+	  //will read data from the pipe
+	  while ((bytesRead = read(fd[0], line, sizeof(line))) > 0) {	
+	  		printf("Data received through pipe:");
+	  		//will print the required message everytime a newline is encountered
+	  		//otherwise prints the buffer's data 
+	  		for (ssize_t i = 0; i < bytesRead-1; ++i) {
+				if (line[i] == '\n') {
+                    printf("Data received through pipe:");
+                }
+                else{
+	                printf("%c", line[i]);
+	                if (line[i+1]=='\n'){
+	                	printf("\n");
+					}
+	   			}
+    		}
+		}
+	}
 }
 
-		printf("\n"); // ensure a newline after the last line
-		wait(NULL); // wait for child process to finish
-    close(fd[0]); // close reading end of pipe
-
-
-  }
-
-  return 0;
-}
