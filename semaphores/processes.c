@@ -11,8 +11,6 @@ void* P3(void* arg);
 
 sem_t sem_P1P3, sem_P2P1;
 
-int sharedCounter = 0;
-
 int main() {
     pthread_t thread_P1, thread_P2, thread_P3;
 
