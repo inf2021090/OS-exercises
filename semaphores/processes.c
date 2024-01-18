@@ -37,10 +37,10 @@ void* P1(void* arg) {
     while (1) {
         sem_wait(&sem_P1P3);
         fprintf(file, "P1:Hello from p1\n");
-        fprintf(stdout, "P1:Hello from p1\n");  // Print to stdout
+        fprintf(stdout, "P1:Hello from p1\n"); 
         fflush(file);  // Flush the file buffer
         sem_post(&sem_P2P1);
-        sleep(1); // Adjust sleep time as needed
+        sleep(1); 
     }
     fclose(file);
 }
@@ -50,10 +50,10 @@ void* P2(void* arg) {
     while (1) {
         sem_wait(&sem_P2P1);
         fprintf(file, "P2:This is p2\n");
-        fprintf(stdout, "P2:This is p2\n");  // Print to stdout
+        fprintf(stdout, "P2:This is p2\n");  
         fflush(file);  // Flush the file buffer
         sem_post(&sem_P1P3);
-        sleep(1); // Adjust sleep time as needed
+        sleep(1); 
     }
     fclose(file);
 }
@@ -63,10 +63,10 @@ void* P3(void* arg) {
     while (1) {
         sem_wait(&sem_P1P3);
         fprintf(file, "P3:Im p3\n");
-        fprintf(stdout, "P3:Im p3\n");  // Print to stdout
+        fprintf(stdout, "P3:Im p3\n");  
         fflush(file);  // Flush the file buffer
         sem_post(&sem_P2P1);
-        sleep(1); // Adjust sleep time as needed
+        sleep(1); 
     }
     fclose(file);
 }
